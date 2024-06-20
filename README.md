@@ -91,7 +91,7 @@ The frontend is a simple HTML and JavaScript application that interacts with the
 
 ### For Backend
 
-the curl commands to test the API manually. These commands assume that the backend server is running on http://localhost:8080.
+The curl commands to test the API manually. These commands assume that the backend server is running on http://localhost:8080.
 
 - Login to get JWT token
 
