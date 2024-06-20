@@ -1,117 +1,178 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Management</title>
-    <link rel="stylesheet" href="static/style.css">
-</head>
-<body>
-    <h1>Company Management System</h1>
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    const response = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
+        alert('Login successful');
+        showMenu(data.role);
+    } else {
+        alert('Login failed: ' + data.error);
+    }
+});
+
+function showMenu(role) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('adminMenu').style.display = role === 'Admin' ? 'block' : 'none';
+    document.getElementById('hrMenu').style.display = role === 'HR' ? 'block' : 'none';
+    document.getElementById('salesMenu').style.display = role === 'Sales' ? 'block' : 'none';
+    document.getElementById('accountantMenu').style.display = role === 'Accountant' ? 'block' : 'none';
+}
+
+
+
+
+function showSection(section) {
+    document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
+    document.getElementById(section).style.display = 'block';
+}
+
+async function fetchUsers() {
+    const response = await fetch('/users', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    });
+    const users = await response.json();
+    const usersList = document.getElementById('usersList');
+    usersList.innerHTML = users.map(user => `<p>${user.username} (${user.role})</p>`).join('');
+}
+
+async function fetchPayrolls() {
+    const response = await fetch('/payroll', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    });
+
+    if (response.ok) {
+        const payrolls = await response.json();
+        console.log('Fetched payrolls:', payrolls); // Log to verify the response
+        const payrollsList = document.getElementById('payrollsList');
+        payrollsList.innerHTML = payrolls.map(payroll => `<p>${payroll.employee_name} - ${payroll.amount} - ${payroll.status}</p>`).join('');
+    } else {
+        alert('Failed to fetch payrolls');
+    }
+}
+
+async function fetchCustomers() {
+    const response = await fetch('/customers', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    });
+    const customers = await response.json();
+    const customersList = document.getElementById('customersList');
+    customersList.innerHTML = customers.map(customer => `<p>${customer.name} (${customer.email})</p>`).join('');
+}
+
+async function fetchBillings() {
+    const response = await fetch('/billings', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    });
+    const billings = await response.json();
+    const billingsList = document.getElementById('billingsList');
+    billingsList.innerHTML = billings.map(billing => `<p>${billing.customer} - ${billing.amount}</p>`).join('');
+}
+
+document.getElementById('createUserForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById('createUsername').value;
+    const password = document.getElementById('createPassword').value;
+    const role = document.getElementById('createRole').value;
+
+    const response = await fetch('/users', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify({ username, password, role })
+    });
+
+    if (response.ok) {
+        alert('User created successfully');
+        showSection('login');
+    } else {
+        const data = await response.json();
+        alert('User creation failed: ' + data.error);
+    }
+});
+
+document.getElementById('createPayrollForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const employee_name = document.getElementById('payrollEmployee').value;
+    const amount = parseFloat(document.getElementById('payrollAmount').value);
+    const status = document.getElementById('payrollStatus').value;
+
+    const response = await fetch('/payroll', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify({ employee_name, amount, status })
+    });
+
+    if (response.ok) {
+        alert('Payroll created successfully');
+    } else {
+        const data = await response.json();
+        alert('Payroll creation failed: ' + data.error);
+    }
+});
+
+document.getElementById('createCustomerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('customerName').value;
+    const address = document.getElementById('customerAddress').value;
+    const email = document.getElementById('customerEmail').value;
+
+    const response = await fetch('/customers', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify({ name, address, email })
+    });
+
+    if (response.ok) {
+        alert('Customer created successfully');
+    } else {
+        const data = await response.json();
+        alert('Customer creation failed: ' + data.error);
+    }
+});
+
+document.getElementById('createBillingForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const customer_name = document.getElementById('billingCustomer').value;
+    const amount = parseFloat(document.getElementById('billingAmount').value);
+    const status = document.getElementById('billingStatus').value;
     
-    <div id="login">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-    </div>
 
-    <div id="adminMenu" style="display:none;">
-        <h2>Admin Actions</h2>
-        <button onclick="showSection('createUser')">Create User</button>
-        <button onclick="showSection('viewUsers')">View Users</button>
-    </div>
+    const response = await fetch('/billings', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify({ customer_name, amount, status })
+    });
 
-    <div id="hrMenu" style="display:none;">
-        <h2>HR Actions</h2>
-        <button onclick="showSection('createPayroll')">Create Payroll</button>
-        <button onclick="showSection('viewPayrolls')">View Payrolls</button>
-    </div>
-
-    <div id="salesMenu" style="display:none;">
-        <h2>Sales Actions</h2>
-        <button onclick="showSection('createCustomer')">Create Customer</button>
-        <button onclick="showSection('viewCustomers')">View Customers</button>
-        <button onclick="showSection('createBilling')">Create Billing</button>
-        <button onclick="showSection('viewBillings')">View Billings</button>
-    </div>
-
-    <div id="accountantMenu" style="display:none;">
-        <h2>Accountant Actions</h2>
-        <button onclick="showSection('viewPayrolls')">View Payrolls</button>
-        <button onclick="showSection('viewBillings')">View Billings</button>
-    </div>
-
-    <div id="createUser" class="section" style="display:none;">
-        <h2>Create User</h2>
-        <form id="createUserForm">
-            <input type="text" id="createUsername" placeholder="Username" required>
-            <input type="password" id="createPassword" placeholder="Password" required>
-            <select id="createRole">
-                <option value="HR">HR</option>
-                <option value="Sales">Sales</option>
-                <option value="Accountant">Accountant</option>
-            </select>
-            <button type="submit">Create User</button>
-        </form>
-    </div>
-
-    <div id="viewUsers" class="section" style="display:none;">
-        <h2>View Users</h2>
-        <button onclick="fetchUsers()">Fetch Users</button>
-        <div id="usersList"></div>
-    </div>
-
-    <div id="createPayroll" class="section" style="display:none;">
-        <h2>Create Payroll</h2>
-        <form id="createPayrollForm">
-            <input type="text" id="payrollEmployee" placeholder="Employee Name" required>
-            <input type="number" id="payrollAmount" placeholder="Amount" required>
-            <input type="text" id="payrollStatus" placeholder="Status" required>
-            <button type="submit">Create Payroll</button>
-        </form>
-    </div>
-
-    <div id="viewPayrolls" class="section" style="display:none;">
-        <h2>View Payrolls</h2>
-        <button onclick="fetchPayrolls()">Fetch Payrolls</button>
-        <div id="payrollsList"></div>
-    </div>
-
-    <div id="createCustomer" class="section" style="display:none;">
-        <h2>Create Customer</h2>
-        <form id="createCustomerForm">
-            <input type="text" id="customerName" placeholder="Customer Name" required>
-            <input type="text" id="customerAddress" placeholder="Address" required>
-            <input type="email" id="customerEmail" placeholder="Email" required>
-            <button type="submit">Create Customer</button>
-        </form>
-    </div>
-
-    <div id="viewCustomers" class="section" style="display:none;">
-        <h2>View Customers</h2>
-        <button onclick="fetchCustomers()">Fetch Customers</button>
-        <div id="customersList"></div>
-    </div>
-
-    <div id="createBilling" class="section" style="display:none;">
-        <h2>Create Billing</h2>
-        <form id="createBillingForm">
-            <input type="text" id="billingCustomer" placeholder="Customer Name" required>
-            <input type="number" id="billingAmount" placeholder="Amount" required>
-            <input type="text" id="billingStatus" placeholder="Status" required>
-            <button type="submit">Create Billing</button>
-        </form>
-    </div>
-
-    <div id="viewBillings" class="section" style="display:none;">
-        <h2>View Billings</h2>
-        <button onclick="fetchBillings()">Fetch Billings</button>
-        <div id="billingsList"></div>
-    </div>
-
-    <script src="static/script.js"></script>
-</body>
-</html>
+    if (response.ok) {
+        alert('Billing created successfully');
+    } else {
+        const data = await response.json();
+        alert('Billing creation failed: ' + data.error);
+    }
+});
