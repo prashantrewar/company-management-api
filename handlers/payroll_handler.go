@@ -14,7 +14,10 @@ func CreatePayroll(c *gin.Context) {
         return
     }
 
-    db.DB.Create(&payroll)
+    if err := db.DB.Create(&payroll).Error; err != nil{
+        c.JSON(http.StatusInternalServerError, gin.H{"error":"Failed to create payroll"})
+        return
+    }
     c.JSON(http.StatusOK, payroll)
 }
 
