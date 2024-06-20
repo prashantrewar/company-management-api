@@ -179,7 +179,7 @@ curl -X POST http://localhost:8080/billings \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer <SALES_TOKEN>" \
 -d '{
-    "customer_id": 1,
+    "customer_name": Rama,
     "amount": 1000,
     "status": "Pending"
 }'
