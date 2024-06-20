@@ -6,7 +6,7 @@ import (
 
 type Billing struct {
     gorm.Model
-    CustomerID uint   `json:"customer_id" binding:"required"`
+    CustomerName string `json:"customer_name" binding:"required"`
     Amount     float64 `json:"amount" binding:"required"`
     Status     string `json:"status" binding:"required"`
 }
