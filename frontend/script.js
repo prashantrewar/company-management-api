@@ -50,9 +50,15 @@ async function fetchPayrolls() {
     const response = await fetch('/payroll', {
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
     });
-    const payrolls = await response.json();
-    const payrollsList = document.getElementById('payrollsList');
-    payrollsList.innerHTML = payrolls.map(payroll => `<p>${payroll.employee} - ${payroll.amount}</p>`).join('');
+
+    if (response.ok) {
+        const payrolls = await response.json();
+        console.log('Fetched payrolls:', payrolls); // Log to verify the response
+        const payrollsList = document.getElementById('payrollsList');
+        payrollsList.innerHTML = payrolls.map(payroll => `<p>${payroll.employee_name} - ${payroll.amount} - ${payroll.status}</p>`).join('');
+    } else {
+        alert('Failed to fetch payrolls');
+    }
 }
 
 async function fetchCustomers() {
@@ -101,9 +107,9 @@ document.getElementById('createUserForm').addEventListener('submit', async funct
 document.getElementById('createPayrollForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const employee = document.getElementById('payrollEmployee').value;
-    const amount = document.getElementById('payrollAmount').value;
-    const status = document.getElementById('payrollStatus').value
+    const employee_name = document.getElementById('payrollEmployee').value;
+    const amount = parseFloat(document.getElementById('payrollAmount').value);
+    const status = document.getElementById('payrollStatus').value;
 
     const response = await fetch('/payroll', {
         method: 'POST',
@@ -111,7 +117,7 @@ document.getElementById('createPayrollForm').addEventListener('submit', async fu
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
-        body: JSON.stringify({ employee, amount, status })
+        body: JSON.stringify({ employee_name, amount, status })
     });
 
     if (response.ok) {
@@ -149,8 +155,10 @@ document.getElementById('createCustomerForm').addEventListener('submit', async f
 document.getElementById('createBillingForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const customer = document.getElementById('billingCustomer').value;
-    const amount = document.getElementById('billingAmount').value;
+    const customer_name = document.getElementById('billingCustomer').value;
+    const amount = parseFloat(document.getElementById('billingAmount').value);
+    const status = document.getElementById('billingStatus').value;
+    
 
     const response = await fetch('/billings', {
         method: 'POST',
@@ -158,7 +166,7 @@ document.getElementById('createBillingForm').addEventListener('submit', async fu
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
-        body: JSON.stringify({ customer, amount })
+        body: JSON.stringify({ customer_name, amount, status })
     });
 
     if (response.ok) {
