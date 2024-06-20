@@ -14,7 +14,7 @@ This is a basic API built with the Go/Golang programming language to practice ba
 - JWT (JSON Web Token): Used for secure authentication and authorization.
 - HTML, CSS, JavaScript: HTML for structuring web pages, CSS for styling, and JavaScript for client-side scripting and interacting with the backend API.
 
-- Fetch API: Handles CRUD operations and retrieves data to update the frontend interface dynamically.
+- Fetch API: Handles Create and Read operations and retrieves data to update the frontend interface dynamically.
 
 
 #### Directory structure
