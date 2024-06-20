@@ -83,7 +83,7 @@ The frontend is a simple HTML and JavaScript application that interacts with the
 
 - Dynamic Forms and Actions: Forms are provided for creating users, payrolls, customers, and billings. JavaScript handles form submissions and fetches data using the Fetch API.
 
-- AJAX Requests: Asynchronous requests are made to the backend API to perform CRUD operations. Responses are handled to display success or error messages to the user.
+- AJAX Requests: Asynchronous requests are made to the backend API to perform Create and Read operations. Responses are handled to display success or error messages to the user.
 
 
 
