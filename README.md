@@ -30,7 +30,6 @@ company-management- api/
 │   ├── payroll_handler.go
 ├── middleware/
 │   ├── auth_middleware.go
-│   ├── role_middleware.go
 ├── models/
 │   ├── user.go
 │   ├── customer.go
