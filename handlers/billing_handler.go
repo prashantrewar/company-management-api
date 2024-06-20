@@ -14,7 +14,11 @@ func CreateBilling(c *gin.Context) {
         return
     }
 
-    db.DB.Create(&billing)
+    if err := db.DB.Create(&billing).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create billing"})
+        return
+    }
+
     c.JSON(http.StatusOK, billing)
 }
 
