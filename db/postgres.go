@@ -1,12 +1,13 @@
 package db
 
 import (
-    "fmt"
-    "log"
-    "os"
+	"company-management-api/models"
+	"fmt"
+	"log"
+	"os"
 
-    "gorm.io/driver/postgres"
-    "gorm.io/gorm"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
@@ -35,4 +36,10 @@ func Init() {
     }
 
     fmt.Println("Connected to database")
+
+    // Automatically migrate your models (creates tables if they do not exist)
+    err = DB.AutoMigrate(&models.User{}, &models.Customer{}, &models.Billing{}, &models.Payroll{})
+    if err != nil {
+        log.Fatalf("Failed to migrate database: %v", err)
+    }
 }
